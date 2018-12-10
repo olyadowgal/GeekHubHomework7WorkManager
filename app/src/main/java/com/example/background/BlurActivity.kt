@@ -24,6 +24,8 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.RadioGroup
+import androidx.lifecycle.Observer
+import androidx.work.WorkStatus
 import com.bumptech.glide.Glide
 
 
@@ -42,6 +44,8 @@ class BlurActivity : AppCompatActivity() {
         setContentView(R.layout.activity_blur)
         bindResources()
         setOnClickListeners()
+
+        viewModel.outputStatus.observe(this, workStatusesObserver())
 
         // Get the ViewModel
         viewModel = ViewModelProviders.of(this).get(BlurViewModel::class.java)
@@ -95,4 +99,28 @@ class BlurActivity : AppCompatActivity() {
                 R.id.radio_blur_lv_3 -> 3
                 else -> 1
             }
+    private fun workStatusesObserver(): Observer<List<WorkStatus>> {
+        return Observer { listOfWorkStatuses ->
+
+            // Note that these next few lines grab a single WorkStatus if it exists
+            // This code could be in a Transformation in the ViewModel; they are included here
+            // so that the entire process of displaying a WorkStatus is in one location.
+
+            // If there are no matching work statuses, do nothing
+            if (listOfWorkStatuses == null || listOfWorkStatuses.isEmpty()) {
+                return@Observer
+            }
+
+            // We only care about the one output status.
+            // Every continuation has only one worker tagged TAG_OUTPUT
+            val workStatus = listOfWorkStatuses[0]
+
+            if (workStatus.state.isFinished) {
+                showWorkFinished()
+            } else {
+                showWorkInProgress()
+            }
+        }
+    }
+
 }

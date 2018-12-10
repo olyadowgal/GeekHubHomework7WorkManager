@@ -16,12 +16,10 @@
 
 package com.example.background
 
-import androidx.lifecycle.ViewModel
 import android.net.Uri
-import androidx.work.Data
-import androidx.work.ExistingWorkPolicy
-import androidx.work.OneTimeWorkRequest
-import androidx.work.WorkManager
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.ViewModel
+import androidx.work.*
 import com.example.background.workers.BlurWorker
 import com.example.background.workers.CleanupWorker
 import com.example.background.workers.SaveImageToFileWorker
@@ -31,7 +29,15 @@ class BlurViewModel : ViewModel() {
 
     internal var imageUri: Uri? = null
     internal var outputUri: Uri? = null
+    internal val outputStatus: LiveData<List<WorkStatus>>
     private val workManager: WorkManager = WorkManager.getInstance()
+    val save = OneTimeWorkRequestBuilder<SaveImageToFileWorker>()
+            .addTag(TAG_OUTPUT)
+            .build()
+
+    init {
+        outputStatus = workManager.getStatusesByTagLiveData(TAG_OUTPUT)
+    }
 
     internal fun applyBlur(blurLevel: Int) {
         var continuation = workManager
