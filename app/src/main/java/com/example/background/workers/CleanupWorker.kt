@@ -1,3 +1,4 @@
+
 package com.example.background.workers
 
 import android.content.Context
@@ -7,11 +8,14 @@ import androidx.work.WorkerParameters
 import com.example.background.OUTPUT_PATH
 import java.io.File
 
+
 class CleanupWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params) {
 
     private val TAG by lazy { CleanupWorker::class.java.simpleName }
 
     override fun doWork(): Result {
+
+
         makeStatusNotification("Cleaning up old temporary files", applicationContext)
         sleep()
 
