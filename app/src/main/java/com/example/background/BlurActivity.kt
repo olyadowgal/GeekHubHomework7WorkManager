@@ -41,6 +41,7 @@ class BlurActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_blur)
         bindResources()
+        setOnClickListeners()
 
         // Get the ViewModel
         viewModel = ViewModelProviders.of(this).get(BlurViewModel::class.java)
@@ -80,6 +81,10 @@ class BlurActivity : AppCompatActivity() {
         progressBar.visibility = View.GONE
         cancelButton.visibility = View.GONE
         goButton.visibility = View.VISIBLE
+    }
+
+    private fun setOnClickListeners() {
+        goButton.setOnClickListener { viewModel.applyBlur(blurLevel) }
     }
 
     private val blurLevel: Int
